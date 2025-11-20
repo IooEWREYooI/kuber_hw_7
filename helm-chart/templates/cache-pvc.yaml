@@ -1,0 +1,18 @@
+{{- if and .Values.cache.enabled .Values.cache.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "app-stack.fullname" . }}-cache
+  labels:
+    {{- include "app-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.cache.persistence.size }}
+  {{- if .Values.cache.persistence.storageClass }}
+  storageClassName: {{ .Values.cache.persistence.storageClass }}
+  {{- end }}
+{{- end }}

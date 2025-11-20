@@ -1,0 +1,44 @@
+{{- if .Values.cache.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app-stack.fullname" . }}-cache
+  labels:
+    {{- include "app-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cache
+spec:
+  replicas: {{ .Values.cache.replicas }}
+  selector:
+    matchLabels:
+      {{- include "app-stack.cacheSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "app-stack.cacheSelectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: cache
+          image: {{ .Values.global.imageRegistry }}{{ .Values.cache.image.repository }}:{{ .Values.cache.image.tag }}
+          imagePullPolicy: {{ .Values.cache.image.pullPolicy }}
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.cache.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          {{- if .Values.cache.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "app-stack.fullname" . }}-cache
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

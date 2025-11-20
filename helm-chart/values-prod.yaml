@@ -1,0 +1,58 @@
+# Production environment values
+global:
+  imageRegistry: "myregistry.com"
+
+database:
+  replicas: 3
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "1000m"
+    limits:
+      memory: "8Gi"
+      cpu: "2000m"
+  persistence:
+    size: "100Gi"
+    storageClass: "fast-ssd"
+
+cache:
+  replicas: 3
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "1000m"
+    limits:
+      memory: "8Gi"
+      cpu: "2000m"
+  persistence:
+    size: "50Gi"
+    storageClass: "fast-ssd"
+
+backend:
+  replicas: 10
+  resources:
+    requests:
+      memory: "600Mi"
+      cpu: "1000m"
+    limits:
+      memory: "1Gi"
+      cpu: "1500m"
+
+frontend:
+  replicas: 5
+  resources:
+    requests:
+      memory: "50Mi"
+      cpu: "200m"
+    limits:
+      memory: "100Mi"
+      cpu: "300m"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: app.example.com
+      paths:
+        - path: /
+          pathType: Prefix

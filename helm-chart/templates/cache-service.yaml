@@ -1,0 +1,18 @@
+{{- if .Values.cache.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app-stack.fullname" . }}-cache
+  labels:
+    {{- include "app-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cache
+spec:
+  type: {{ .Values.cache.service.type }}
+  ports:
+    - port: {{ .Values.cache.service.port }}
+      targetPort: redis
+      protocol: TCP
+      name: redis
+  selector:
+    {{- include "app-stack.cacheSelectorLabels" . | nindent 4 }}
+{{- end }}

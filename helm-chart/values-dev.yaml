@@ -1,0 +1,50 @@
+# Development environment values
+global:
+  imageRegistry: "docker.io"
+
+database:
+  replicas: 1
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "500m"
+  persistence:
+    size: "10Gi"
+
+cache:
+  replicas: 1
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "500m"
+  persistence:
+    size: "5Gi"
+
+backend:
+  replicas: 2
+  resources:
+    requests:
+      memory: "300Mi"
+      cpu: "500m"
+    limits:
+      memory: "400Mi"
+      cpu: "500m"
+
+frontend:
+  replicas: 2
+  resources:
+    requests:
+      memory: "25Mi"
+      cpu: "100m"
+    limits:
+      memory: "30Mi"
+      cpu: "100m"
+
+ingress:
+  enabled: false

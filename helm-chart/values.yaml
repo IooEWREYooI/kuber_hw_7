@@ -1,0 +1,119 @@
+# Default values for app-stack chart
+
+# Global settings
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+
+# Database settings
+database:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "15"
+    pullPolicy: IfNotPresent
+
+  replicas: 3
+
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "1000m"
+    limits:
+      memory: "4Gi"
+      cpu: "1000m"
+
+  persistence:
+    enabled: true
+    size: "50Gi"
+    storageClass: ""
+
+  service:
+    type: ClusterIP
+    port: 5432
+
+# Cache settings
+cache:
+  enabled: true
+  image:
+    repository: redis
+    tag: "7"
+    pullPolicy: IfNotPresent
+
+  replicas: 3
+
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "1000m"
+    limits:
+      memory: "4Gi"
+      cpu: "1000m"
+
+  persistence:
+    enabled: true
+    size: "10Gi"
+    storageClass: ""
+
+  service:
+    type: ClusterIP
+    port: 6379
+
+# Backend settings
+backend:
+  enabled: true
+  image:
+    repository: myapp/backend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+  replicas: 10
+
+  resources:
+    requests:
+      memory: "600Mi"
+      cpu: "1000m"
+    limits:
+      memory: "600Mi"
+      cpu: "1000m"
+
+  service:
+    type: ClusterIP
+    port: 8080
+
+  env:
+    - name: DATABASE_URL
+      value: "postgresql://db:5432"
+    - name: CACHE_URL
+      value: "redis://cache:6379"
+
+# Frontend settings
+frontend:
+  enabled: true
+  image:
+    repository: myapp/frontend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+  replicas: 5
+
+  resources:
+    requests:
+      memory: "50Mi"
+      cpu: "200m"
+    limits:
+      memory: "50Mi"
+      cpu: "200m"
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: true
+    className: ""
+    hosts:
+      - host: myapp.local
+        paths:
+          - path: /
+            pathType: Prefix

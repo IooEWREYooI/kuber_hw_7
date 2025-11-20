@@ -1,0 +1,17 @@
+apiVersion: v2
+name: app-stack
+description: A Helm chart for deploying application stack with database, cache, backend and frontend
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+keywords:
+  - database
+  - cache
+  - backend
+  - frontend
+  - kubernetes
+
+maintainers:
+  - name: Student
+    email: student@example.com

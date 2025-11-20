@@ -1,0 +1,51 @@
+{{- if .Values.database.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app-stack.fullname" . }}-database
+  labels:
+    {{- include "app-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  replicas: {{ .Values.database.replicas }}
+  selector:
+    matchLabels:
+      {{- include "app-stack.databaseSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "app-stack.databaseSelectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: database
+          image: {{ .Values.global.imageRegistry }}{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}
+          imagePullPolicy: {{ .Values.database.image.pullPolicy }}
+          ports:
+            - name: postgresql
+              containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              value: "appdb"
+            - name: POSTGRES_USER
+              value: "appuser"
+            - name: POSTGRES_PASSWORD
+              value: "apppassword"
+          resources:
+            {{- toYaml .Values.database.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          {{- if .Values.database.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "app-stack.fullname" . }}-database
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
